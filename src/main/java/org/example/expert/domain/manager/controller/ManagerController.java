@@ -1,6 +1,7 @@
 package org.example.expert.domain.manager.controller;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.config.JwtUtil;
@@ -38,12 +39,11 @@ public class ManagerController {
 
     @DeleteMapping("/todos/{todoId}/managers/{managerId}")
     public void deleteManager(
-            @RequestHeader("Authorization") String bearerToken,
+            HttpServletRequest request, // JwtFilter의 JWT 처리 로직 거쳐서 인증된 사용자 정보 저장된 HttpServletRequest 객체 가져오기
             @PathVariable long todoId,
             @PathVariable long managerId
     ) {
-        Claims claims = jwtUtil.extractClaims(bearerToken.substring(7));
-        long userId = Long.parseLong(claims.getSubject());
+        long userId = (long) request.getAttribute("userId"); // HttpServletRequest에 저장된 인증된 사용자 정보 가져와서 비즈니스 로직에만 집중
         managerService.deleteManager(userId, todoId, managerId);
     }
 }
