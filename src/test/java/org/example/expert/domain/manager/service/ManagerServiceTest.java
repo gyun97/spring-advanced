@@ -121,4 +121,11 @@ class ManagerServiceTest {
         assertEquals(managerUser.getId(), response.getUser().getId());
         assertEquals(managerUser.getEmail(), response.getUser().getEmail());
     }
+
+    @Test
+    void 담당자를_등록하려는_유저가_일정_작성_유저인지_확인한다() {
+
+
+
+    }
 }
