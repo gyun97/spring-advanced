@@ -36,7 +36,7 @@ public class ManagerService {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new InvalidRequestException("Todo not found"));
 
-        // null 체크 추가(Lv 2-8)
+        // todo 유저 null 체크 추가(Lv 2-8)
         if (todo.getUser() == null) {
             throw new InvalidRequestException("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.");
         }
@@ -61,22 +61,22 @@ public class ManagerService {
         );
     }
 
-    public List<ManagerResponse> getManagers(long todoId) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new InvalidRequestException("Todo not found"));
+        public List<ManagerResponse> getManagers(long todoId) {
+            Todo todo = todoRepository.findById(todoId)
+                    .orElseThrow(() -> new InvalidRequestException("Todo not found"));
 
-        List<Manager> managerList = managerRepository.findByTodoIdWithUser(todo.getId());
+            List<Manager> managerList = managerRepository.findByTodoIdWithUser(todo.getId());
 
-        List<ManagerResponse> dtoList = new ArrayList<>();
-        for (Manager manager : managerList) {
-            User user = manager.getUser();
-            dtoList.add(new ManagerResponse(
-                    manager.getId(),
-                    new UserResponse(user.getId(), user.getEmail())
-            ));
+            List<ManagerResponse> dtoList = new ArrayList<>();
+            for (Manager manager : managerList) {
+                User user = manager.getUser();
+                dtoList.add(new ManagerResponse(
+                        manager.getId(),
+                        new UserResponse(user.getId(), user.getEmail())
+                ));
+            }
+            return dtoList;
         }
-        return dtoList;
-    }
 
     @Transactional
     public void deleteManager(long userId, long todoId, long managerId) {

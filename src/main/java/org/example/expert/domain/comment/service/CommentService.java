@@ -32,6 +32,7 @@ public class CommentService {
         Todo todo = todoRepository.findById(todoId).orElseThrow(() ->
                 new InvalidRequestException("Todo not found"));
 
+
         Comment newComment = new Comment(
                 commentSaveRequest.getContents(),
                 user,
@@ -61,5 +62,10 @@ public class CommentService {
             dtoList.add(dto);
         }
         return dtoList;
+    }
+
+    private static boolean isManager(Todo todo, User user) {
+        return todo.getManagers().stream()
+                .anyMatch(manager -> manager.getUser().getId().equals(user.getId()));
     }
 }
