@@ -99,4 +99,9 @@ public class ManagerService {
 
         managerRepository.delete(manager);
     }
+
+    public boolean isManager(Todo todo, User user) {
+        return todo.getManagers().stream()
+                .anyMatch(manager -> manager.getUser().getId().equals(user.getId()));
+    }
 }

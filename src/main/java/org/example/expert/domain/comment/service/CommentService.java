@@ -8,6 +8,7 @@ import org.example.expert.domain.comment.entity.Comment;
 import org.example.expert.domain.comment.repository.CommentRepository;
 import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.common.exception.InvalidRequestException;
+import org.example.expert.domain.manager.service.ManagerService;
 import org.example.expert.domain.todo.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponse;
@@ -25,12 +26,17 @@ public class CommentService {
 
     private final TodoRepository todoRepository;
     private final CommentRepository commentRepository;
+    private final ManagerService managerService;
 
     @Transactional
     public CommentSaveResponse saveComment(AuthUser authUser, long todoId, CommentSaveRequest commentSaveRequest) {
         User user = User.fromAuthUser(authUser);
         Todo todo = todoRepository.findById(todoId).orElseThrow(() ->
                 new InvalidRequestException("Todo not found"));
+
+        if (!managerService.isManager(todo, user)) {
+            throw new InvalidRequestException("해당 할일의 담당자가 아니면 댓글을 작성할 권한이 없습니다.");
+        }
 
 
         Comment newComment = new Comment(
@@ -64,8 +70,6 @@ public class CommentService {
         return dtoList;
     }
 
-    private static boolean isManager(Todo todo, User user) {
-        return todo.getManagers().stream()
-                .anyMatch(manager -> manager.getUser().getId().equals(user.getId()));
-    }
+
+
 }
